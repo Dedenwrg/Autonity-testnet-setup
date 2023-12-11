@@ -13,7 +13,7 @@ services:
       --ws
       --ws.addr 0.0.0.0
       --ws.api aut,eth,net,txpool,web3,admin
-      --nat extip:IP_ADDRESS
+      --nat extip:$(curl -s ifconfig.me)
       --bootnodes enode://d4dc137f987e17155a69b31e566494c16edafd228912483cc519a48ce85864781faccc38141cc0eb1df8cdb28b9b3ccd10e1c298bac78ac43bbe5804021c1152@34.142.71.5:30303,enode:>
     volumes:
       - ./autonity-chaindata:/autonity-chaindata
