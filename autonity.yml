@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  autonity:
+    image: ghcr.io/autonity/autonity:latest
+    command: >
+      --datadir /autonity-chaindata
+      --piccadilly
+      --http
+      --http.addr 0.0.0.0
+      --http.api aut,eth,net,txpool,web3,admin
+      --http.vhosts *
+      --ws
+      --ws.addr 0.0.0.0
+      --ws.api aut,eth,net,txpool,web3,admin
+      --nat extip:IP_ADDRESS
+      --bootnodes enode://d4dc137f987e17155a69b31e566494c16edafd228912483cc519a48ce85864781faccc38141cc0eb1df8cdb28b9b3ccd10e1c298bac78ac43bbe5804021c1152@34.142.71.5:30303,enode:>
+    volumes:
+      - ./autonity-chaindata:/autonity-chaindata
+    ports:
+      - "8545:8545"
+      - "8546:8546"
+      - "30303:30303"
+      - "30303:30303/udp"
+      - "6060:6060"
+    stdin_open: true
+    tty: true
+    container_name: autonity
+    restart: "no"
