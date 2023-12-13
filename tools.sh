@@ -10,6 +10,12 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install python3 git curl -y
 sudo apt install python3-pip python3.8-venv -y
 
+# Install httpie
+curl -SsL https://packages.httpie.io/deb/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/httpie.gpg
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/httpie.gpg] https://packages.httpie.io/deb ./" | sudo tee /etc/apt/sources.list.d/httpie.list
+sudo apt update
+sudo apt install httpie -y
+
 # Check if pipx is installed
 if ! package_installed pipx; then
     # Install pipx if not installed
