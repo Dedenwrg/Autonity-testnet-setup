@@ -18,8 +18,9 @@ while true; do
   echo "5. Place Order"
   echo "6. Cancel Order"
   echo "7. Withdraw"
-  echo "8. Exit"
-  read -p "Enter your choice (1/2/3/4/5/6/7/8): " CHOICE
+  echo "8. Check Open Order"
+  echo "9. Exit"
+  read -p "Enter your choice (1/2/3/4/5/6/7/8/9): " CHOICE
 
   case "$CHOICE" in
     "1")
@@ -164,6 +165,17 @@ while true; do
       http POST "https://cax.piccadilly.autonity.org/api/withdraws/" "API-Key:$APIKEY" "symbol=$SYMBOL" "amount=$AMOUNT"
       ;;
     "8")
+      # Making an HTTP GET request to view open orders with order ID 0 and status "open"
+      API_RESPONSE=$(http GET "https://cax.piccadilly.autonity.org/api/orders" "API-Key:$API" | jq '.[] | select(.order_id == 0 and .status == "open")')
+
+      if [ -n "$API_RESPONSE" ]; then
+        echo "Open orders with order ID 0 and status 'open':"
+        echo "$API_RESPONSE"
+      else
+        echo "No open orders with order ID 0 found."
+      fi
+      ;;  
+    "9")
       echo "Exiting the script."
       exit 0
       ;;
