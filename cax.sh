@@ -169,10 +169,10 @@ while true; do
       API_RESPONSE=$(http GET "https://cax.piccadilly.autonity.org/api/orders" "API-Key:$API" | jq '.[] | select(.order_id == 0 and .status == "open")')
 
       if [ -n "$API_RESPONSE" ]; then
-        echo "Open orders with order ID 0 and status 'open':"
+        echo "Open orders with status 'open':"
         echo "$API_RESPONSE"
       else
-        echo "No open orders with order ID 0 found."
+        echo "No open orders found."
       fi
       ;;  
     "9")
