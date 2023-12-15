@@ -9,7 +9,7 @@ while true; do
     exit 1
   fi
 
-  # Displaying the menu options
+  # Displaying the action options
   echo "Action options:"
   echo "1. Generate API Key"
   echo "2. View Balance"
@@ -22,6 +22,12 @@ while true; do
 
   case "$CHOICE" in
     "1")
+      # Checking if API KEY is already present in the .env file
+      if [ -n "$APIKEY" ]; then
+        echo "API KEY is already registered in .env. Congratulations, you are ready for other actions!"
+        continue
+      fi
+
       # Creating a message to be signed with a timestamp as a nonce
       MESSAGE=$(jq -nc --arg nonce "$(date +%s%N)" '$ARGS.named')
 
@@ -37,6 +43,7 @@ while true; do
       # Saving the new API key value to the .env file
       echo "APIKEY=$NEW_API_KEY" > .env
       echo "NEW_APIKEY=$NEW_API_KEY"
+      echo "Congratulations! You have successfully obtained an API KEY and it's saved in .env."
       ;;
     "2")
       # Making an HTTP GET request to check the balance
@@ -44,16 +51,16 @@ while true; do
       ;;
     "3")
       # Asking the user to choose a pair (ATN-USD or NTN-USD) for option 3
-      read -p "Choose pair (ATN-USD or NTN-USD): " PAIR_CHOICE
+      read -p "Choose pair (1 for ATN-USD, 2 for NTN-USD): " PAIR_CHOICE
       case "$PAIR_CHOICE" in
-        "ATN-USD")
+        "1")
           PAIR=$PAIR1
           ;;
-        "NTN-USD")
+        "2")
           PAIR=$PAIR2
           ;;
         *)
-          echo "Invalid pair."
+          echo "Invalid choice. 1 corresponds to ATN-USD, and 2 corresponds to NTN-USD."
           continue
           ;;
       esac
@@ -67,16 +74,16 @@ while true; do
       ;;
     "5")
       # Asking the user to choose a pair (ATN-USD or NTN-USD) for option 5
-      read -p "Choose pair (ATN-USD or NTN-USD): " PAIR_CHOICE
+      read -p "Choose pair (1 for ATN-USD, 2 for NTN-USD): " PAIR_CHOICE
       case "$PAIR_CHOICE" in
-        "ATN-USD")
+        "1")
           PAIR=$PAIR1
           ;;
-        "NTN-USD")
+        "2")
           PAIR=$PAIR2
           ;;
         *)
-          echo "Invalid pair."
+          echo "Invalid choice. 1 corresponds to ATN-USD, and 2 corresponds to NTN-USD."
           continue
           ;;
       esac
