@@ -16,9 +16,10 @@ while true; do
   echo "3. View Order Books"
   echo "4. View Order Books without Specific Pair"
   echo "5. Place Order"
-  echo "6. Withdraw"
-  echo "7. Exit"
-  read -p "Enter your choice (1/2/3/4/5/6/7): " CHOICE
+  echo "6. Cancel Order"
+  echo "7. Withdraw"
+  echo "8. Exit"
+  read -p "Enter your choice (1/2/3/4/5/6/7/8): " CHOICE
 
   case "$CHOICE" in
     "1")
@@ -105,6 +106,50 @@ while true; do
       http POST "https://cax.piccadilly.autonity.org/api/orders/" "API-Key:$APIKEY" "pair=$PAIR" "side=$SIDE" "price=$PRICE" "amount=$AMOUNT"
       ;;
     "6")
+      # Asking the user whether to cancel a specific order or all orders
+      read -p "Do you want to cancel a specific order or all orders? (specific/all): " CANCEL_OPTION
+
+      case "$CANCEL_OPTION" in
+        "specific")
+          # Get the ID of the first open order
+          SPECIFIC_ORDER_ID=$(http GET https://cax.piccadilly.autonity.org/api/orders API-Key:$API | jq -r 'first(.[] | select(.status == "open") | .order_id)')
+
+          # Check if there is an open order
+          if [ -n "$SPECIFIC_ORDER_ID" ]; then
+            # Making an HTTP DELETE request to cancel the specific order
+            http DELETE "https://cax.piccadilly.autonity.org/api/orders/$SPECIFIC_ORDER_ID" API-Key:$API
+
+            if [ $? -eq 0 ]; then
+              echo "Order $SPECIFIC_ORDER_ID has been canceled successfully."
+            else
+              echo "Failed to cancel order $SPECIFIC_ORDER_ID. Please check the order ID."
+            fi
+          else
+            echo "No open orders to cancel."
+          fi
+          ;;
+        "all")
+          # Getting all open order IDs
+          order_ids=$(http GET https://cax.piccadilly.autonity.org/api/orders API-Key:$API | jq -r '.[] | select(.status == "open") | .order_id')
+
+          if [ -n "$order_ids" ]; then
+            # Canceling each open order
+            for order_id in $order_ids; do
+              http DELETE "https://cax.piccadilly.autonity.org/api/orders/$order_id" API-Key:$API
+              echo "Order $order_id has been canceled successfully."
+            done
+
+            echo "All open orders have been canceled successfully."
+          else
+            echo "No open orders to cancel."
+          fi
+          ;;
+        *)
+          echo "Invalid option. No orders canceled."
+          ;;
+      esac
+      ;;
+    "7")
       # Asking the user to choose a symbol (ATN or NTN)
       read -p "Choose symbol (ATN or NTN): " SYMBOL
       if [ "$SYMBOL" != "ATN" ] && [ "$SYMBOL" != "NTN" ]; then
@@ -118,7 +163,7 @@ while true; do
       # Making an HTTP POST request to withdraw with the chosen symbol and amount
       http POST "https://cax.piccadilly.autonity.org/api/withdraws/" "API-Key:$APIKEY" "symbol=$SYMBOL" "amount=$AMOUNT"
       ;;
-    "7")
+    "8")
       echo "Exiting the script."
       exit 0
       ;;
