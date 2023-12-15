@@ -16,11 +16,12 @@ while true; do
   echo "3. View Order Books"
   echo "4. View Order Books without Specific Pair"
   echo "5. Place Order"
-  echo "6. Cancel Order"
-  echo "7. Withdraw"
-  echo "8. Check Open Order"
-  echo "9. Exit"
-  read -p "Enter your choice (1/2/3/4/5/6/7/8/9): " CHOICE
+  echo "6. Check Open Order"
+  echo "7. Cancel Order"
+  echo "8. Withdraw"
+  echo "9. Check Deposits & Withdraw history"
+  echo "10. Exit"
+  read -p "Enter your choice (1/2/3/4/5/6/7/8/9/10): " CHOICE
 
   case "$CHOICE" in
     "1")
@@ -107,6 +108,17 @@ while true; do
       http POST "https://cax.piccadilly.autonity.org/api/orders/" "API-Key:$APIKEY" "pair=$PAIR" "side=$SIDE" "price=$PRICE" "amount=$AMOUNT"
       ;;
     "6")
+      # Making an HTTP GET request to view open orders with order ID 0 and status "open"
+      API_RESPONSE=$(http GET "https://cax.piccadilly.autonity.org/api/orders" "API-Key:$API" | jq 'map(select(.status == "open"))')
+
+      if [ -n "$API_RESPONSE" ]; then
+        echo "Open orders with status 'open':"
+        echo "$API_RESPONSE"
+      else
+        echo "No open orders found."
+      fi
+      ;;  
+    "7")
       # Asking the user whether to cancel a specific order or all orders
       read -p "Do you want to cancel a specific order or all orders? (specific/all): " CANCEL_OPTION
 
@@ -150,7 +162,7 @@ while true; do
           ;;
       esac
       ;;
-    "7")
+    "8")
       # Asking the user to choose a symbol (ATN or NTN)
       read -p "Choose symbol (ATN or NTN): " SYMBOL
       if [ "$SYMBOL" != "ATN" ] && [ "$SYMBOL" != "NTN" ]; then
@@ -164,18 +176,28 @@ while true; do
       # Making an HTTP POST request to withdraw with the chosen symbol and amount
       http POST "https://cax.piccadilly.autonity.org/api/withdraws/" "API-Key:$APIKEY" "symbol=$SYMBOL" "amount=$AMOUNT"
       ;;
-    "8")
-      # Making an HTTP GET request to view open orders with order ID 0 and status "open"
-      API_RESPONSE=$(http GET "https://cax.piccadilly.autonity.org/api/orders" "API-Key:$API" | jq 'map(select(.status == "open"))')
-
-      if [ -n "$API_RESPONSE" ]; then
-        echo "Open orders with status 'open':"
-        echo "$API_RESPONSE"
-      else
-        echo "No open orders found."
-      fi
-      ;;  
     "9")
+      # Making an HTTP GET request to view deposit history
+      DEPOSIT_HISTORY=$(http GET "https://cax.piccadilly.autonity.org/api/deposits" "API-Key:$API")
+
+      if [ -n "$DEPOSIT_HISTORY" ]; then
+        echo "Deposit History:"
+        echo "$DEPOSIT_HISTORY"
+      else
+        echo "No deposit history found."
+      fi
+
+      # Making an HTTP GET request to view withdraw history
+      WITHDRAW_HISTORY=$(http GET "https://cax.piccadilly.autonity.org/api/withdraws" "API-Key:$API")
+
+      if [ -n "$WITHDRAW_HISTORY" ]; then
+        echo "Withdraw History:"
+        echo "$WITHDRAW_HISTORY"
+      else
+        echo "No withdraw history found."
+      fi
+      ;;
+    "10")
       echo "Exiting the script."
       exit 0
       ;;
