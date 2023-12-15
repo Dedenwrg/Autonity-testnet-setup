@@ -166,7 +166,7 @@ while true; do
       ;;
     "8")
       # Making an HTTP GET request to view open orders with order ID 0 and status "open"
-      API_RESPONSE=$(http GET "https://cax.piccadilly.autonity.org/api/orders" "API-Key:$API" | jq '.[] | select(.order_id == 0 and .status == "open")')
+      API_RESPONSE=$(http GET "https://cax.piccadilly.autonity.org/api/orders" "API-Key:$API" | jq 'map(select(.status == "open"))')
 
       if [ -n "$API_RESPONSE" ]; then
         echo "Open orders with status 'open':"
