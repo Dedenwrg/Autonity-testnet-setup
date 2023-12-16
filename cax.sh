@@ -14,7 +14,7 @@ while true; do
   echo "1. Generate API Key"
   echo "2. View Balance"
   echo "3. View Order Books"
-  echo "4. View Order Books without Specific Pair"
+  echo "4. orderbook information"
   echo "5. Place Order"
   echo "6. Check Open Order"
   echo "7. Cancel Order"
