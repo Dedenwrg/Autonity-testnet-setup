@@ -21,6 +21,7 @@ if ! package_installed pipx; then
     # Install pipx if not installed
     python3 -m pip install --user pipx
     python3 -m pipx ensurepath
+    apt install python3.8-venv
 fi
 
 # Restart terminal
