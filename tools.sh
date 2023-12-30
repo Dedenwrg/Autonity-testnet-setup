@@ -8,7 +8,9 @@ package_installed() {
 # Prerequisites
 sudo apt update && sudo apt upgrade -y
 sudo apt install python3 git curl -y
-python3-pip python3.8-venv -y
+sudo apt-get install python3-pip
+python3 -m pip install --user pipx
+python3 -m pipx ensurepath
 
 # Install httpie
 curl -SsL https://packages.httpie.io/deb/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/httpie.gpg
